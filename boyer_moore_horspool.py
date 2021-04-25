@@ -1,5 +1,6 @@
 def boyer_moore_horspool(st, subst):
     indices = []  # искомый массив индексов
+    compares = 0
     unique = set()  # уникальные символы в подстроке
     offsets = {}  # словарь смещений
 
@@ -21,12 +22,15 @@ def boyer_moore_horspool(st, subst):
     k = len(subst) - 1
 
     while k < len(st):
+        compares += 1
         j = len(subst) - 1  # счетчик проверяемого символа в подстроке
         i = k  # счетчик проверяемого символа в строке
         while j >= 0 and st[i] == subst[j]:
+            compares += 2
             j -= 1
             i -= 1
 
+        compares += 1
         if j == len(subst) - 1:  # не совпал последний символ
             if offsets.get(st[i]) is None:
                 off = offsets['*']
@@ -35,9 +39,10 @@ def boyer_moore_horspool(st, subst):
         else:  # не совпал любой символ, кроме последнего
             off = offsets[subst[j]]
 
+        compares += 1
         if j == -1:  # образ найден
             indices.append(i + 1)
 
         k += off
 
-    return indices
+    return indices, compares
